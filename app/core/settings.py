@@ -1,4 +1,5 @@
 from datetime import datetime
+
 from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
 
@@ -26,11 +27,11 @@ class Settings(BaseSettings):
     passwords (default is 15).
     """
 
-    db_user: str
+    db_user: str | None = None
     db_name: str
     db_host: str = "localhost"
-    db_password: str
-    db_port: int
+    db_password: str | None = None
+    db_port: int | None = None
     dev: bool = False
     minimum_password_length: int = 8
     maximum_password_length: int = 15
@@ -40,8 +41,8 @@ class Settings(BaseSettings):
     database_type: str = "sqlite"
     model_config = ConfigDict(env_file=".env")
     secret_key: str
-    oauth2_algorithm: str
-    access_token_expire_minutes: int
+    oauth2_algorithm: str = "HS256"
+    access_token_expire_minutes: int = 3600
     access_token_duration: datetime | None = None
     api_version: str = "v1"
     login_route: str = f"api/{api_version}/login"
