@@ -114,6 +114,7 @@ class ProductsPublic(BaseResponse[Product]):
 
     message: str = "Products retrieved successfully."
     status_code: int = status.HTTP_200_OK
+    count: int
     data: list[Product]
 
 

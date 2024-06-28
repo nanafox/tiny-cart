@@ -49,6 +49,7 @@ class Settings(BaseSettings):
     login_route: str = f"api/{api_version}/login"
     pagination_limit: int = 100
     pagination_default_page: int = 10
+    api_schema_filepath: str = "app/static/api.json"
 
 
 settings = Settings()
