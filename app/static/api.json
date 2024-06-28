@@ -7,8 +7,8 @@
     },
     "servers": [
         {
-            "url": "http://localhost:8000",
-            "description": "Local server"
+            "url": "https://tinycart.lzcorp.tech",
+            "description": "Production server"
         }
     ],
     "paths": {
@@ -26,6 +26,24 @@
                         "application/json": {
                             "schema": {
                                 "$ref": "#/components/schemas/UserCreate"
+                            },
+                            "examples": {
+                                "create a buyer user": {
+                                    "value": {
+                                        "email": "bob@example.com",
+                                        "role": "buyer",
+                                        "username": "bob",
+                                        "password": "$@30spassword2323+"
+                                    }
+                                },
+                                "create a seller user": {
+                                    "value": {
+                                        "email": "jamie@example.com",
+                                        "role": "seller",
+                                        "username": "jamie",
+                                        "password": "badpassword"
+                                    }
+                                }
                             }
                         }
                     }
@@ -37,19 +55,44 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/UserPublic"
+                                },
+                                "examples": {
+                                    "buyer user response": {
+                                        "value": {
+                                            "message": "User created successfully",
+                                            "status_code": 201,
+                                            "success": true,
+                                            "data": {
+                                                "email": "bob@example.com",
+                                                "role": "buyer",
+                                                "username": "bob",
+                                                "created_at": "2024-06-28T14:00:22.689143",
+                                                "updated_at": "2024-06-28T14:00:22.689143",
+                                                "user_id": "e59dbb66-255b-4be9-9ae7-8d833f851897"
+                                            }
+                                        }
+                                    },
+                                    "seller user response": {
+                                        "value": {
+                                            "message": "User created successfully",
+                                            "status_code": 201,
+                                            "success": true,
+                                            "data": {
+                                                "email": "jamie@example.com",
+                                                "role": "seller",
+                                                "username": "jamie",
+                                                "created_at": "2024-06-28T14:00:22.689143",
+                                                "updated_at": "2024-06-28T14:00:22.689143",
+                                                "user_id": "4c1e28e9-06bd-4065-a79b-1238b32a91af"
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
                     },
                     "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
+                        "description": "Validation Error"
                     }
                 }
             },
@@ -59,7 +102,7 @@
                 ],
                 "summary": "Retrieve users on the platform",
                 "description": "This endpoint retrieves a list of users or a specific user from the system\nbased on the provided search criteria. You have the flexibility to search\nfor users by their `username` or `email`. This allows for a more targeted\nretrieval of user information, catering to different needs:\n\n- **Search by Username**: If you are looking for a specific user and know\n  their username, you can provide it as a query parameter. This will\n  return the public information of the user associated with the given\n  username.\n\n- **Search by Email**: Similarly, if you have the email of the user, you\n  can use it as a search criterion. This is particularly useful in\n  scenarios where usernames might be forgotten or not known, but the\n  email address is available.\n\nIf no search parameters (`username` or `email`) are provided, the endpoint\nwill return a paginated list of all users in the system. This is useful\nfor getting an overview of all users or for administrative purposes where\na comprehensive list is required.\n\nThis endpoint also supports pagination through the `skip` and `limit`\nquery parameters, allowing you to control the number of users returned in\nthe list and to paginate through large sets of users efficiently.\n\n**Note**: This endpoint is designed with privacy in mind, ensuring that\nsensitive user information is not exposed. It is suitable for both\nadministrative use and functionality within the application that requires\nuser lookup capabilities.",
-                "operationId": "get_users_api_v1_users_get",
+                "operationId": "get_users",
                 "security": [
                     {
                         "OAuth2PasswordBearer": []
@@ -129,14 +172,7 @@
                         }
                     },
                     "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
+                        "description": "Validation Error"
                     }
                 }
             }
@@ -196,14 +232,7 @@
                         }
                     },
                     "422": {
-                        "description": "Validation Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/HTTPValidationError"
-                                }
-                            }
-                        }
+                        "description": "Validation Error"
                     }
                 },
                 "security": [
@@ -222,6 +251,9 @@
                 "responses": {
                     "204": {
                         "description": "Successful Response"
+                    },
+                    "404": {
+                        "description": "Not Found"
                     }
                 },
                 "security": [
