@@ -1,7 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse, RedirectResponse
 
 from app import schemas
 from app.api.main import api_router
@@ -25,24 +24,21 @@ if settings.dev:
 else:
     servers = [{"url": settings.prod_url, "description": "Production server"}]
 
-swagger_ui_parameters = {
-    "filter": True,
-    "docExpansion": "list",
-    "configUrl": "/static/api.json",
-}
 
 app = FastAPI(
     title="TinyCart API",
     version=settings.api_version,
     description=description,
+    contact={
+        "name": "Maxwell Nana Forson",
+        "url": "https://linktr.ee/theLazyProgrammer",
+        "email": "nanaforsonjnr@gmail.com",
+    },
+    docs_url=f"/api/{settings.api_version}/docs" if settings.dev else None,
+    redoc_url=f"/api/{settings.api_version}/redoc" if settings.dev else None,
     servers=servers,
-    docs_url=f"/api/{settings.api_version}/docs",
-    redoc_url=f"/api/{settings.api_version}/redoc",
-    swagger_ui_parameters=swagger_ui_parameters,
-    openapi_url="/static/api.json",
 )
 
-app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 origins = ["*"]
 app.add_middleware(
@@ -54,15 +50,18 @@ app.add_middleware(
 )
 
 
-@app.get("/favicon.ico", include_in_schema=False)
-def get_image():
-    return FileResponse("app/static/favicon.ico")
-
-
-@app.get("/static/api.json", include_in_schema=False)
-def get_p():
+@api_router.get("/schema", include_in_schema=False)
+def get_api_schema():
     print("using this")
-    return FileResponse("app/static/api.json")
+    return FileResponse(settings.api_schema_filepath)
+
+
+@api_router.get("/docs", include_in_schema=False)
+async def get_docs():
+    return RedirectResponse(
+        url="https://documenter.getpostman.com/view/14404907/2sA3dsnESD",
+        status_code=status.HTTP_301_MOVED_PERMANENTLY,
+    )
 
 
 @api_router.get(
