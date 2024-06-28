@@ -29,6 +29,7 @@ class Settings(BaseSettings):
 
     db_user: str | None = None
     db_name: str
+    db_database: str | None = None
     db_host: str = "localhost"
     db_password: str | None = None
     db_port: int | None = None
@@ -51,6 +52,10 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+if settings.db_database:
+    settings.db_name = settings.db_database
+
 if settings.database_type == "sqlite":
     if settings.dev:
         settings.database_url = f"sqlite:///{settings.db_name}_dev.db"
